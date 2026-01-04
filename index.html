@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>띠띠n빵빵</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="app-container">
+        <header class="main-header">
+            <h1><i class="fa-solid fa-calculator"></i> 띠띠n빵빵</h1>
+        </header>
+
+        <main>
+            <!-- 섹션 1: 계산내역 (항목 입력) -->
+            <section id="section-input" class="step-section">
+                <div class="section-header">
+                    <div class="header-text">
+                        <span class="step-badge">STEP 1</span>
+                        <h2>지출 내역을 입력해주세요</h2>
+                    </div>
+                    <button class="btn-broom" onclick="resetAllData()" title="전체 초기화">
+                        🧹
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <div id="round-list">
+                        <!-- 자바스크립트로 차수 리스트 생성 -->
+                    </div>
+
+                    <button class="btn-add-round" onclick="addNewRound()">
+                        <i class="fa-solid fa-plus"></i> 항목 추가하기
+                    </button>
+                </div>
+
+                <div class="nav-actions right">
+                    <button class="nav-text-btn" onclick="goToSection('section-matrix')">
+                        참석자 <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- 섹션 2: 참석자 (매트릭스 설정) -->
+            <section id="section-matrix" class="step-section">
+                <div class="section-header">
+                    <div class="header-text">
+                        <span class="step-badge">STEP 2</span>
+                        <h2>누가 계산하고 참여했나요?</h2>
+                    </div>
+                    <button class="btn-broom" onclick="resetAllData()" title="전체 초기화">
+                        🧹
+                    </button>
+                </div>
+
+                <div class="card">
+                    <div class="matrix-controls">
+                        <div class="input-group">
+                            <input type="text" id="new-person-name" placeholder="이름 입력 (예: 띠띠)" onkeypress="handleEnter(event)">
+                            <button class="btn-icon-add" onclick="addPerson()"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        
+                        <div class="mode-toggles">
+                            <button id="btn-mode-pay" class="btn-mode" onclick="setMode('pay')">
+                                <span class="icon">👑</span> 결제한 사람
+                            </button>
+                            <button id="btn-mode-exclude" class="btn-mode" onclick="setMode('exclude')">
+                                <span class="icon">🙅</span> 제외할 사람
+                            </button>
+                        </div>
+                        <p class="mode-desc" id="mode-desc">위 버튼을 누르고 표의 칸을 클릭하세요</p>
+                    </div>
+
+                    <div class="table-wrapper custom-scroll">
+                        <table id="matrix-table">
+                            <thead id="matrix-head">
+                                <!-- JS로 헤더 생성 -->
+                            </thead>
+                            <tbody id="matrix-body">
+                                <!-- JS로 바디 생성 -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="nav-actions split">
+                    <button class="nav-text-btn" onclick="goToSection('section-input')">
+                        <i class="fa-solid fa-arrow-left"></i> 차수
+                    </button>
+                    <button class="nav-text-btn" onclick="goToSection('section-result')">
+                        정산 <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </section>
+
+            <!-- 섹션 3: 정산 (결과) -->
+            <section id="section-result" class="step-section">
+                <div class="section-header">
+                    <div class="header-text">
+                        <span class="step-badge">FINISH</span>
+                        <h2>최종 정산 결과입니다</h2>
+                    </div>
+                    <button class="btn-broom" onclick="resetAllData()" title="전체 초기화">
+                        🧹
+                    </button>
+                </div>
+
+                <div class="card result-container">
+                    <div id="settlement-list">
+                        <!-- JS로 결과 생성 -->
+                    </div>
+                </div>
+
+                <div class="nav-actions split">
+                    <button class="nav-text-btn" onclick="goToSection('section-matrix')">
+                        <i class="fa-solid fa-arrow-left"></i> 참석자
+                    </button>
+                    <button class="nav-text-btn" onclick="resetAllData()">
+                        처음으로 <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+                
+                <button class="btn-settle" onclick="copySettlementToClipboard()">
+                    정산하기
+                </button>
+            </section>
+        </main>
+        
+        <footer class="main-footer">
+            © Simple Dutch Pay
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
