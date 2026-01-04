@@ -39,7 +39,52 @@ document.addEventListener('DOMContentLoaded', () => {
     renderRounds();
     renderMatrix();
     renderResult();
+    
+    // 스크롤 이벤트 리스너 추가 - 섹션 진입 시 결제한 사람 버튼 활성화
+    const appContainer = document.querySelector('.app-container');
+    if (appContainer) {
+        appContainer.addEventListener('scroll', handleScroll);
+    }
+    
+    // 초기 로드 시 현재 보이는 섹션 확인
+    setTimeout(checkCurrentSection, 100);
 });
+
+// === 스크롤 이벤트 핸들러 ===
+function handleScroll() {
+    checkCurrentSection();
+}
+
+// === 현재 보이는 섹션 확인 ===
+function checkCurrentSection() {
+    const sections = ['section-input', 'section-matrix', 'section-result'];
+    const appContainer = document.querySelector('.app-container');
+    if (!appContainer) return;
+    
+    const containerTop = appContainer.scrollTop;
+    const containerHeight = appContainer.clientHeight;
+    
+    for (const sectionId of sections) {
+        const section = document.getElementById(sectionId);
+        if (!section) continue;
+        
+        const sectionTop = section.offsetTop - appContainer.offsetTop;
+        const sectionHeight = section.offsetHeight;
+        
+        // 섹션이 화면에 보이는지 확인 (50% 이상 보이면 활성화)
+        if (containerTop >= sectionTop - containerHeight * 0.3 && 
+            containerTop < sectionTop + sectionHeight - containerHeight * 0.7) {
+            
+            if (sectionId === 'section-matrix') {
+                // 매트릭스 페이지 진입 시 결제한 사람 버튼 자동 활성화
+                if (currentMode !== 'pay') {
+                    setMode('pay');
+                }
+            }
+            break;
+        }
+    }
+}
 
 function loadData() {
     const saved = localStorage.getItem('nBangMasterData');
@@ -56,17 +101,28 @@ function resetAllData() {
     state = { rounds: [], people: [], payers: {}, exclusions: {} };
     localStorage.removeItem('nBangMasterData');
     
+    // 활성화된 버튼 비활성화
+    currentMode = null;
+    updateModeUI();
+    
     // 데이터 초기화 후 기본 3차 생성
     for(let i=0; i<3; i++) addNewRound(false);
     saveData();
-    
-    // 최상단으로 부드럽고 빠르게 스크롤
-    window.scrollTo({ top: 0, behavior: 'smooth' });
     
     // 렌더링 업데이트
     renderRounds();
     renderMatrix();
     renderResult();
+    
+    // 최상단으로 부드럽고 빠르게 스크롤 (렌더링 후 실행)
+    setTimeout(() => {
+        const appContainer = document.querySelector('.app-container');
+        if (appContainer) {
+            appContainer.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    }, 100);
 }
 
 // === 결제자 선택 검증 ===
@@ -461,9 +517,25 @@ function copySettlementToClipboard() {
     // 결제자 선택 검증
     if (!validatePayers()) {
         alert('계산한 사람 선택');
+        // 스텝2로 스크롤
+        goToSection('section-matrix');
         return;
     }
     
+    // 결제자가 모두 선택되었을 때 확인 팝업
+    if (confirm('정산표를 복사하고 초기화하시겠습니까?')) {
+        // 정산표 복사 및 초기화 진행
+        performSettlementAndReset();
+        // 최상단으로 스크롤
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        // 취소 시 스텝2로 스크롤
+        goToSection('section-matrix');
+    }
+}
+
+// === 정산표 복사 및 초기화 ===
+function performSettlementAndReset() {
     let balances = {};
     state.people.forEach(p => balances[p.id] = 0);
 
@@ -533,7 +605,8 @@ function copySettlementToClipboard() {
 
     // 클립보드에 복사
     navigator.clipboard.writeText(settlementText).then(() => {
-        alert('정산표가 클립보드에 복사되었습니다!');
+        // 초기화 및 스텝1로 스크롤 (팝업 없이)
+        resetAllData();
     }).catch(err => {
         // 클립보드 API가 지원되지 않는 경우 대체 방법
         const textArea = document.createElement('textarea');
@@ -545,7 +618,8 @@ function copySettlementToClipboard() {
         textArea.select();
         try {
             document.execCommand('copy');
-            alert('정산표가 클립보드에 복사되었습니다!');
+            // 초기화 및 스텝1로 스크롤 (팝업 없이)
+            resetAllData();
         } catch (err) {
             alert('클립보드 복사에 실패했습니다. 정산표를 직접 복사해주세요.\n\n' + settlementText);
         }
