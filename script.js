@@ -150,6 +150,19 @@ function removeRound(id) {
 
 function renderRounds() {
     const container = document.getElementById('round-list');
+    
+    // 현재 입력 중인 값들을 먼저 저장
+    state.rounds.forEach(round => {
+        const nameInput = document.getElementById(`round-name-${round.id}`);
+        const amountInput = document.getElementById(`round-amount-${round.id}`);
+        if (nameInput) {
+            round.name = nameInput.value;
+        }
+        if (amountInput) {
+            round.amount = unformatNumber(amountInput.value);
+        }
+    });
+    
     container.innerHTML = '';
     
     state.rounds.forEach((round, index) => {
@@ -165,15 +178,16 @@ function renderRounds() {
         div.innerHTML = `
             <span class="round-idx">${roundNum}</span>
             <input type="text" 
+                   id="round-name-${roundIdStr}"
                    value="${escapedName}" 
                    placeholder="${roundNum}차" 
-                   onchange="updateRound(${roundIdStr}, 'name', this.value)">
+                   oninput="updateRound(${roundIdStr}, 'name', this.value)">
             <input type="tel" 
+                   id="round-amount-${roundIdStr}"
                    value="${displayAmount}" 
                    placeholder="0" 
                    inputmode="numeric" 
-                   oninput="this.value = formatNumber(unformatNumber(this.value));"
-                   onchange="updateRound(${roundIdStr}, 'amount', this.value)">
+                   oninput="this.value = formatNumber(unformatNumber(this.value)); updateRound(${roundIdStr}, 'amount', this.value);">
             ${state.rounds.length > 1 ? `<button class="btn-del-round" onclick="removeRound(${roundIdStr})"><i class="fa-solid fa-minus"></i></button>` : ''}
         `;
         container.appendChild(div);

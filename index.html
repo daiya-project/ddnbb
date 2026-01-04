@@ -22,9 +22,6 @@
                         <span class="step-badge">STEP 1</span>
                         <h2>지출 내역을 입력해주세요</h2>
                     </div>
-                    <button class="btn-broom" onclick="resetAllData()" title="전체 초기화">
-                        🧹
-                    </button>
                 </div>
                 
                 <div class="card">
@@ -37,8 +34,11 @@
                     </button>
                 </div>
 
-                <div class="nav-actions right">
-                    <button class="nav-text-btn" onclick="goToSection('section-matrix')">
+                <div class="nav-actions" style="position: relative; justify-content: center;">
+                    <button class="nav-text-btn" onclick="resetAllData()">
+                        처음으로 <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                    <button class="nav-text-btn" onclick="goToSection('section-matrix')" style="position: absolute; right: 0;">
                         참석자 <i class="fa-solid fa-arrow-right"></i>
                     </button>
                 </div>
@@ -51,9 +51,6 @@
                         <span class="step-badge">STEP 2</span>
                         <h2>누가 계산하고 참여했나요?</h2>
                     </div>
-                    <button class="btn-broom" onclick="resetAllData()" title="전체 초기화">
-                        🧹
-                    </button>
                 </div>
 
                 <div class="card">
@@ -90,6 +87,9 @@
                     <button class="nav-text-btn" onclick="goToSection('section-input')">
                         <i class="fa-solid fa-arrow-left"></i> 차수
                     </button>
+                    <button class="nav-text-btn" onclick="resetAllData()">
+                        처음으로 <i class="fa-solid fa-rotate-right"></i>
+                    </button>
                     <button class="nav-text-btn" onclick="goToSection('section-result')">
                         정산 <i class="fa-solid fa-arrow-right"></i>
                     </button>
@@ -103,9 +103,6 @@
                         <span class="step-badge">FINISH</span>
                         <h2>최종 정산 결과입니다</h2>
                     </div>
-                    <button class="btn-broom" onclick="resetAllData()" title="전체 초기화">
-                        🧹
-                    </button>
                 </div>
 
                 <div class="card result-container">
@@ -114,12 +111,12 @@
                     </div>
                 </div>
 
-                <div class="nav-actions split">
-                    <button class="nav-text-btn" onclick="goToSection('section-matrix')">
-                        <i class="fa-solid fa-arrow-left"></i> 참석자
-                    </button>
+                <div class="nav-actions" style="position: relative; justify-content: center;">
                     <button class="nav-text-btn" onclick="resetAllData()">
                         처음으로 <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                    <button class="nav-text-btn" onclick="goToSection('section-matrix')" style="position: absolute; left: 0;">
+                        <i class="fa-solid fa-arrow-left"></i> 참석자
                     </button>
                 </div>
                 

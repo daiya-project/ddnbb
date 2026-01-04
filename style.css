@@ -21,12 +21,19 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; }
 
-html { scroll-behavior: smooth; }
+html { 
+    scroll-behavior: smooth;
+    height: 100%;
+}
 
 body {
     background-color: var(--bg-color);
     color: var(--text-main);
     line-height: 1.6;
+    height: 100%;
+    overflow: hidden;
+    position: fixed;
+    width: 100%;
 }
 
 .app-container {
@@ -34,6 +41,10 @@ body {
     margin: 0 auto;
     padding: 0 20px;
     padding-bottom: 50px;
+    height: 100vh;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
 }
 
 /* 헤더 */
@@ -51,14 +62,16 @@ body {
 
 /* 섹션 공통 스타일 */
 .step-section {
-    min-height: 80vh;
+    min-height: 100vh;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 0;
     padding: 20px 0;
     opacity: 0;
     animation: fadeSlideUp 0.8s forwards;
+    overflow: hidden;
 }
 
 @keyframes fadeSlideUp {
@@ -66,7 +79,7 @@ body {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* 섹션 헤더 (타이틀 + 빗자루 Flexbox 배치) */
+/* 섹션 헤더 */
 .section-header {
     margin-bottom: 15px;
     display: flex;
@@ -91,20 +104,6 @@ body {
 }
 .section-header h2 { font-size: 1.4rem; color: var(--text-main); }
 
-/* 빗자루 버튼 스타일 */
-.btn-broom {
-    background: transparent;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    transition: transform 0.2s;
-    padding: 5px;
-    line-height: 1;
-}
-
-.btn-broom:hover {
-    transform: rotate(-15deg) scale(1.1); /* 귀여운 끄덕임 효과 */
-}
 
 /* 카드 스타일 */
 .card {
