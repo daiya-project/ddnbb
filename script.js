@@ -69,8 +69,27 @@ function resetAllData() {
     renderResult();
 }
 
+// === 결제자 선택 검증 ===
+function validatePayers() {
+    const activeRounds = state.rounds.filter(r => r.amount > 0);
+    for (const round of activeRounds) {
+        if (!state.payers[round.id]) {
+            return false;
+        }
+    }
+    return true;
+}
+
 // === 스크롤 네비게이션 ===
 function goToSection(sectionId) {
+    // 정산 결과 페이지로 이동 시 결제자 선택 검증
+    if (sectionId === 'section-result') {
+        if (!validatePayers()) {
+            alert('계산한 사람 선택');
+            return;
+        }
+    }
+    
     const section = document.getElementById(sectionId);
     if (section) {
         section.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -439,6 +458,12 @@ function renderResult() {
 
 // === 4. 정산표 클립보드 복사 ===
 function copySettlementToClipboard() {
+    // 결제자 선택 검증
+    if (!validatePayers()) {
+        alert('계산한 사람 선택');
+        return;
+    }
+    
     let balances = {};
     state.people.forEach(p => balances[p.id] = 0);
 
@@ -469,31 +494,42 @@ function copySettlementToClipboard() {
     
     // 지출 내역
     if (activeRounds.length > 0) {
-        settlementText += '【지출 내역】\n';
+        settlementText += '💰 지출 내역 \n';
         activeRounds.forEach((round, index) => {
             const roundNum = index + 1;
             const displayName = round.name || `${roundNum}차`;
             const payer = state.people.find(p => p.id === state.payers[round.id]);
             const payerName = payer ? payer.name : '미지정';
-            settlementText += `${displayName}: ${formatNumber(round.amount)}원 (결제: ${payerName})\n`;
+            // 결제자 이름을 괄호 안에 숫자나 이름으로 표시
+            let payerDisplay = payerName;
+            if (payer) {
+                const payerIndex = state.people.findIndex(p => p.id === payer.id) + 1;
+                payerDisplay = payerIndex.toString();
+            } else {
+                payerDisplay = '지정';
+            }
+            settlementText += `${displayName}: ${formatNumber(round.amount)}원 (${payerDisplay})\n`;
         });
         settlementText += '\n';
     }
     
     // 정산 결과
-    settlementText += '【정산 결과】\n';
+    settlementText += '💸 정산 결과\n';
     let hasResult = false;
-    state.people.forEach(person => {
+    state.people.forEach((person, index) => {
         const balance = balances[person.id];
         if (balance === 0) return;
         hasResult = true;
         const sign = balance > 0 ? '+' : '';
-        settlementText += `${person.name}: ${sign}${formatNumber(balance)}원\n`;
+        settlementText += `${index + 1}: ${sign}${formatNumber(balance)}원\n`;
     });
     
     if (!hasResult) {
         settlementText += '정산할 금액이 없습니다.\n';
     }
+    
+    // URL 추가
+    settlementText += '\n띠띠n빵빵 : https://ddnbb.netlify.app/ \n';
 
     // 클립보드에 복사
     navigator.clipboard.writeText(settlementText).then(() => {
