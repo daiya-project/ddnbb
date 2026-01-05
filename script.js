@@ -572,15 +572,8 @@ function performSettlementAndReset() {
             const displayName = round.name || `${roundNum}차`;
             const payer = state.people.find(p => p.id === state.payers[round.id]);
             const payerName = payer ? payer.name : '미지정';
-            // 결제자 이름을 괄호 안에 숫자나 이름으로 표시
-            let payerDisplay = payerName;
-            if (payer) {
-                const payerIndex = state.people.findIndex(p => p.id === payer.id) + 1;
-                payerDisplay = payerIndex.toString();
-            } else {
-                payerDisplay = '지정';
-            }
-            settlementText += `${displayName}: ${formatNumber(round.amount)}원 (${payerDisplay})\n`;
+            // 결제자 이름을 괄호 안에 표시
+            settlementText += `${displayName}: ${formatNumber(round.amount)}원 (${payerName})\n`;
         });
         settlementText += '\n';
     }
@@ -593,7 +586,7 @@ function performSettlementAndReset() {
         if (balance === 0) return;
         hasResult = true;
         const sign = balance > 0 ? '+' : '';
-        settlementText += `${index + 1}: ${sign}${formatNumber(balance)}원\n`;
+        settlementText += `${person.name}: ${sign}${formatNumber(balance)}원\n`;
     });
     
     if (!hasResult) {
@@ -601,7 +594,7 @@ function performSettlementAndReset() {
     }
     
     // URL 추가
-    settlementText += '\n띠띠n빵빵 : https://ddnbb.netlify.app/ \n';
+    settlementText += '\n띠띠n빵빵 : https://ddnbb.netlify.app/';
 
     // 클립보드에 복사
     navigator.clipboard.writeText(settlementText).then(() => {
